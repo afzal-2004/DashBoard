@@ -1,0 +1,8 @@
+.deposit {
+    @apply bg-violet-600 flex px-3 justify-center items-center text-white rounded-xl;
+}
+
+.BuyandSell {
+    @apply bg-violet-300 px-2 py-1 rounded-md flex justify-center items-center gap-4;
+
+}
