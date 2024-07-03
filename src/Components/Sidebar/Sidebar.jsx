@@ -25,14 +25,14 @@ const Sidebar = ({ setOpenSideBar }) => {
             @DashBord
           </h1>
 
-          <p className="Tab ">
+          <div className="Tab ">
             <BiSolidDashboard />
             <p>DashBoard</p>
-          </p>
-          <p className=" Tab">
+          </div>
+          <div className=" Tab">
             <TbArrowsDoubleSwNe />
             <p>Transaction</p>
-          </p>
+          </div>
         </div>
         <div className=" absolute bottom-3 flex   items-center gap-2">
           <BiSupport className=" text-[40px]" />
