@@ -1,4 +1,0 @@
- .Sidebar {
-     @apply absolute top-0 border-red-500 w-full;
-     background-color: rgba(55, 55, 55, 0.5);
- }
