@@ -11,11 +11,12 @@ export const Home = ({ setfile }) => {
   const [Duration, setDuration] = useState(0);
   const mediaRecorderRef = useRef(null);
   const fileInputRef = useRef(null);
+  const mimeType = "audio/webn";
   const handleClick = () => {
     fileInputRef.current.click();
   };
   const Recording = async () => {
-    setstatus("Active");
+    let tempstream;
     console.log("Start Recording");
     console.log(status);
     try {
@@ -23,24 +24,46 @@ export const Home = ({ setfile }) => {
         audio: true,
         video: false,
       });
+      tempstream = Audiodata;
     } catch (error) {
       console.log(error.message);
       return;
     }
+    setstatus("Active");
+    const media = new MediaRecorder(tempstream, { type: mimeType });
+    mediaRecorderRef.current = media;
+    mediaRecorderRef.current.start();
+    let localAudiaoChunks = [];
+    mediaRecorderRef.current.ondataavailable = (event) => {
+      console.log(event.data);
+      if (typeof event.data === "undefined") {
+        return;
+      }
+      if (event.data.size === 0) {
+        return;
+      }
+      localAudiaoChunks.push(event.data);
+    };
+    setrecording(localAudiaoChunks);
   };
   const StopRecording = () => {
-    // setfile(true);
+    setstatus("inActive");
     console.log("Stop Recording");
     console.log(status);
-    if (mediaRecorderRef.current) {
-      mediaRecorderRef.current.stop();
-      const stream = mediaRecorderRef.current.stream;
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-      setstatus("inActive");
-    }
+    mediaRecorderRef.current.stream
+      .getTracks()
+      .forEach((track) => track.stop());
+    mediaRecorderRef.current.stop();
+
+    mediaRecorderRef.current.onstop = () => {
+      const audioBlob = new Blob(recording, { type: mimeType });
+
+      setrecording([]);
+      setDuration(0);
+      setfile(true);
+    };
   };
+
   useEffect(() => {
     if (status === "inActive") {
       return;
@@ -49,7 +72,7 @@ export const Home = ({ setfile }) => {
       const interval = setInterval(() => {
         setDuration((prev) => prev + 1);
       }, 1000);
-      return clearInterval(interval);
+      return () => clearInterval(interval);
     }
   });
 
@@ -64,10 +87,10 @@ export const Home = ({ setfile }) => {
           <button
             className="btn w-full  rounded-xl mt-3"
             onClick={() => {
-              if (status === "Active") {
-                StopRecording();
-              } else {
+              if (status === "inActive") {
                 Recording();
+              } else {
+                StopRecording();
               }
             }}
           >
@@ -77,10 +100,18 @@ export const Home = ({ setfile }) => {
             >
               {status === "Active" ? `Stop Recording...` : `Record`}
             </p>{" "}
-            <FaMicrophone
-              className={`
+            <div className="flex gap-2 justify-center items-center ">
+              <p
+                className={`
+                ${status === "inActive" ? "hidden" : ""}`}
+              >
+                {Duration}
+              </p>
+              <FaMicrophone
+                className={`
                  ${status === "inActive" ? "text-black" : "text-red-500"}`}
-            />{" "}
+              />{" "}
+            </div>
           </button>
           <p className=" mt-[10px] cursor-pointer">
             Or{" "}
