@@ -64,6 +64,8 @@ export const Home = ({ setfile }) => {
     };
   };
 
+  //  After some chages
+
   useEffect(() => {
     if (status === "inActive") {
       return;
